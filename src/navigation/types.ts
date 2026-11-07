@@ -19,6 +19,9 @@ export type RootStackParamList = {
   Login: AuthRedirect;
   Register: AuthRedirect;
   Wishlist: undefined;
+  Orders: undefined;
+  Profile: undefined;
+  Notifications: undefined;
 };
 
 export type RootScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, T>;

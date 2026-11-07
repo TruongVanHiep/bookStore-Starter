@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, RefreshControlProps } from "react-native";
 import { Book } from "../types";
 import { BookCard } from "./BookCard";
 
@@ -9,10 +9,18 @@ interface Props {
   ListHeaderComponent?: React.ReactElement | null;
   ListEmptyComponent?: React.ReactElement | null;
   bottomSpace?: number;
+  refreshControl?: React.ReactElement<RefreshControlProps>;
 }
 
 // Lưới sách 2 cột, dùng lại ở Home, kết quả tìm kiếm, Yêu thích…
-export function BookGrid({ data, onPressBook, ListHeaderComponent, ListEmptyComponent, bottomSpace = 90 }: Props) {
+export function BookGrid({
+  data,
+  onPressBook,
+  ListHeaderComponent,
+  ListEmptyComponent,
+  bottomSpace = 90,
+  refreshControl,
+}: Props) {
   return (
     <FlatList
       data={data}
@@ -21,6 +29,7 @@ export function BookGrid({ data, onPressBook, ListHeaderComponent, ListEmptyComp
       renderItem={({ item }) => <BookCard book={item} onPress={onPressBook} />}
       ListHeaderComponent={ListHeaderComponent}
       ListEmptyComponent={ListEmptyComponent}
+      refreshControl={refreshControl}
       contentContainerStyle={{ padding: 6, paddingBottom: bottomSpace }}
     />
   );

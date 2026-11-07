@@ -113,3 +113,39 @@ Nhấn biểu tượng 👁 để hiện mật khẩu.
 Nhấn biểu tượng 🙈 để ẩn mật khẩu.
 
 Ảnh chụp màn hình: Cần chạy ứng dụng trên thiết bị hoặc trình giả lập, sau đó chụp màn hình giao diện thực tế để bổ sung vào bài nộp.
+
+
+---
+
+# CÂU HỎI & TRẢ LỜI LÝ THUYẾT — BUỔI 9
+
+### 1. Giá trị dẫn xuất (Derived State) trong Form Validate (Bài 9.1)
+- **Khái niệm**: Giá trị dẫn xuất là giá trị được tính toán trực tiếp từ các state có sẵn (ở đây là các trường `name`, `phone`, `address`) thay vì tạo thêm `useState` để lưu lỗi và cờ `isValid`.
+- **Lợi ích**:
+  - Tránh tình trạng bất đồng bộ state: nếu lưu `isValid` vào state riêng, mỗi khi người dùng nhập dữ liệu ta phải nhớ gọi `setIsValid`, rất dễ quên hoặc bị lệch 1 nhịp render (stale state).
+  - Code gọn gàng, một nguồn chân lý (Single Source of Truth):
+    ```ts
+    const nameError = useMemo(() => validateRequired("họ tên")(name), [name]);
+    const phoneError = useMemo(() => validatePhone(phone), [phone]);
+    const addressError = useMemo(() => validateRequired("địa chỉ")(address), [address]);
+    const isValid = !nameError && !phoneError && !addressError;
+    ```
+
+### 2. Cập nhật lạc quan (Optimistic Update) trong Thông báo (Bài 9.5)
+- **Cơ chế**: Khi người dùng nhấn vào một thông báo chưa đọc, ứng dụng không chờ đợi cuộc gọi API `PATCH /notifications/:id` hoàn thành mà cập nhật ngay lập tức giao diện (đổi sang đã đọc, ẩn chấm xanh) trên thiết bị. Song song đó, app gửi request ngầm đến server.
+- **Lợi ích**:
+  - Tối ưu trải nghiệm người dùng (UX): Phản hồi tức thì, không có cảm giác trễ hay giật lag.
+  - Phù hợp với các tác vụ có tỉ lệ thành công cao như đánh dấu đã đọc thông báo, like/tim bài viết.
+  - Nếu API gặp sự cố (network error, timeout), app có thể rollback về trạng thái cũ hoặc thông báo cho người dùng.
+
+### 3. Điều hướng theo dữ liệu (Data-driven Navigation) (Bài 9.5)
+- **Khái niệm**: Dữ liệu thông báo trả về từ máy chủ chứa thông tin đích đến (`target`), ví dụ:
+  - `{ target: { screen: "Orders" } }` -> Điều hướng đến màn hình Đơn hàng.
+  - `{ target: { screen: "BookDetail", bookId: 7 } }` -> Điều hướng đến chi tiết sách id = 7.
+- **Lợi ích**: Giúp ứng dụng linh hoạt, server có thể chủ động quyết định người dùng sẽ được đưa đến đâu khi nhấp vào thông báo mà không cần hard-code logic trong app.
+
+### 4. Cơ chế hoạt động của RefreshControl (Bài 9.6)
+- `RefreshControl` được gắn vào prop `refreshControl` của `ScrollView` hoặc `FlatList`.
+- Gồm hai thành phần cốt lõi:
+  - Prop `refreshing` (boolean): Điều khiển trạng thái quay của biểu tượng làm mới (spinner).
+  - Prop `onRefresh` (hàm callback): Được kích hoạt khi người dùng kéo màn hình vượt ngưỡng làm mới. Trong hàm này, ta gọi API để nạp dữ liệu mới, sau đó đưa `refreshing` về `false`.

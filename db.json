@@ -174,6 +174,13 @@
       "email": "a@bookstore.vn",
       "password": "123456",
       "phone": "0912345678"
+    },
+    {
+      "name": "Trần Văn B",
+      "email": "thuan@gmail.com",
+      "password": "111111",
+      "id": 3,
+      "phone": ""
     }
   ],
   "orders": [
@@ -251,6 +258,48 @@
       "paymentMethod": "cod",
       "status": "pending",
       "createdAt": "2026-10-22T08:05:00.000Z"
+    },
+    {
+      "userId": 1,
+      "items": [
+        {
+          "bookId": 1,
+          "title": "Dế Mèn Phiêu Lưu Ký",
+          "price": 65000,
+          "quantity": 4
+        }
+      ],
+      "total": 260000,
+      "address": {
+        "name": "Học viên Demo",
+        "phone": "0901234567",
+        "address": "phường hạnh thông, Gò vấp"
+      },
+      "paymentMethod": "cod",
+      "status": "pending",
+      "createdAt": "2026-11-07T12:38:19.288Z",
+      "id": 4
+    },
+    {
+      "userId": 1,
+      "items": [
+        {
+          "bookId": 1,
+          "title": "Dế Mèn Phiêu Lưu Ký",
+          "price": 65000,
+          "quantity": 1
+        }
+      ],
+      "total": 65000,
+      "address": {
+        "name": "Học viên Demo",
+        "phone": "0901234567",
+        "address": "991, bình thạnh"
+      },
+      "paymentMethod": "cod",
+      "status": "pending",
+      "createdAt": "2026-11-07T12:40:05.831Z",
+      "id": 5
     }
   ],
   "reviews": [

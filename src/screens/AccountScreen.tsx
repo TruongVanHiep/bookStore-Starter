@@ -33,7 +33,31 @@ export function AccountScreen({ navigation }: TabScreenProps<"Account">) {
         )}
 
         <View style={styles.menu}>
-          <MenuItem emoji="❤️" label="Danh sách yêu thích" hint={ids.length ? `${ids.length} sách` : undefined} onPress={() => navigation.navigate("Wishlist")} />
+          {isLoggedIn && (
+            <>
+              <MenuItem
+                emoji="📦"
+                label="Đơn hàng của tôi"
+                onPress={() => navigation.navigate("Orders")}
+              />
+              <MenuItem
+                emoji="✏️"
+                label="Thông tin cá nhân"
+                onPress={() => navigation.navigate("Profile")}
+              />
+              <MenuItem
+                emoji="🔔"
+                label="Thông báo"
+                onPress={() => navigation.navigate("Notifications")}
+              />
+            </>
+          )}
+          <MenuItem
+            emoji="❤️"
+            label="Danh sách yêu thích"
+            hint={ids.length ? `${ids.length} sách` : undefined}
+            onPress={() => navigation.navigate("Wishlist")}
+          />
         </View>
 
         {isLoggedIn && (

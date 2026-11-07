@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { Header } from "../components/Header";
 import { SearchBar } from "../components/SearchBar";
 import { CategoryChips } from "../components/CategoryChips";
@@ -13,7 +13,7 @@ import { getBooks } from "../services/bookService";
 import { getCategories } from "../services/categoryService";
 import { getErrorMessage } from "../api/client";
 import { useDebounce } from "../hooks/useDebounce";
-import { useCart } from "../store/hooks";
+import { useAuth, useCart } from "../store/hooks";
 import { filterBooks, PriceRange } from "../utils/filters";
 import { TabScreenProps } from "../navigation/types";
 import { Book, Category } from "../types";
@@ -21,11 +21,13 @@ import { colors } from "../theme";
 
 export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
   const { totalQuantity } = useCart();
+  const { isLoggedIn } = useAuth();
 
   // --- dữ liệu từ API ---
   const [books, setBooks] = useState<Book[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // --- bộ lọc ---
@@ -47,6 +49,19 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
       setError(getErrorMessage(e));
     } finally {
       setLoading(false);
+    }
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const [bookList, categoryList] = await Promise.all([getBooks(), getCategories()]);
+      setBooks(bookList);
+      setCategories(categoryList);
+    } catch (e) {
+      setError(getErrorMessage(e));
+    } finally {
+      setRefreshing(false);
     }
   }, []);
 
@@ -89,7 +104,17 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
 
   return (
     <View style={styles.container}>
-      <Header title="📚 BookStore" onSearchPress={() => setSearchOpen((v) => !v)} />
+      <Header
+        title="📚 BookStore"
+        onNotificationPress={() => {
+          if (isLoggedIn) {
+            navigation.navigate("Notifications");
+          } else {
+            navigation.navigate("Login");
+          }
+        }}
+        onSearchPress={() => setSearchOpen((v) => !v)}
+      />
       {searchOpen && (
         <SearchBar
           value={keyword}
@@ -110,6 +135,14 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
           data={visibleBooks}
           onPressBook={(b) => navigation.navigate("BookDetail", { bookId: b.id })}
           ListHeaderComponent={header}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[colors.indigo]}
+              tintColor={colors.indigo}
+            />
+          }
           ListEmptyComponent={
             <EmptyState
               emoji="🔎"

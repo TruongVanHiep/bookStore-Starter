@@ -6,19 +6,37 @@ import { colors } from "../theme";
 interface Props {
   title: string;
   onSearchPress?: () => void; // có truyền → hiện icon Tìm
+  onNotificationPress?: () => void;
 }
 
 // Header dùng chung. onSearchPress mở ô tìm kiếm.
-export function Header({ title, onSearchPress }: Props) {
+export function Header({ title, onSearchPress, onNotificationPress }: Props) {
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.wrap, { paddingTop: insets.top + 14 }]}>
       <Text style={styles.title}>{title}</Text>
-      {onSearchPress && (
-        <Pressable style={styles.iconBtn} onPress={onSearchPress} hitSlop={8} accessibilityLabel="Tìm kiếm">
-          <Text style={styles.icon}>🔍</Text>
-        </Pressable>
-      )}
+      <View style={styles.rightActions}>
+        {onNotificationPress && (
+          <Pressable
+            style={styles.iconBtn}
+            onPress={onNotificationPress}
+            hitSlop={8}
+            accessibilityLabel="Thông báo"
+          >
+            <Text style={styles.icon}>🔔</Text>
+          </Pressable>
+        )}
+        {onSearchPress && (
+          <Pressable
+            style={styles.iconBtn}
+            onPress={onSearchPress}
+            hitSlop={8}
+            accessibilityLabel="Tìm kiếm"
+          >
+            <Text style={styles.icon}>🔍</Text>
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 }
@@ -26,6 +44,7 @@ export function Header({ title, onSearchPress }: Props) {
 const styles = StyleSheet.create({
   wrap: { backgroundColor: colors.navy, paddingHorizontal: 16, paddingVertical: 14, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   title: { color: "#fff", fontSize: 20, fontWeight: "800" },
+  rightActions: { flexDirection: "row", alignItems: "center", gap: 8 },
   iconBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: "rgba(255,255,255,0.15)", alignItems: "center", justifyContent: "center" },
   icon: { fontSize: 18 },
 });
